@@ -20,22 +20,24 @@ def load_mnist(path, kind='train'):
 
     return images, labels
 
+#----------------------------------------------------------------------------------------------------
+# Functions
+
 def Flatten(matrix):
     arr = np.array(matrix)
     return arr.flatten()
 
-def Average(matrix, r, c): # matrix - rows - columns
-    arr = np.array(matrix)
-    n = arr.shape[0]
-    m = arr.shape[1]
+def Average(matrix, r, c): # matrix - number of rows to merge - number of columns to merge
+    n = matrix.shape[0]
+    m = matrix.shape[1]
     
-    a = (n + r - 1) // r # caculate new number of rows
-    b = (m + c - 1) // c # caculate new number of columns
+    a = (n + r - 1) // r   # new number of columns
+    b = (m + c - 1) // c   # new number of rows
     res = np.zeros((a, b))
     
     for i in range(n):
         for j in range(m):
-            res[i // r][j // c] += arr[i][j]
+            res[i // r][j // c] += matrix[i][j]
             
     for i in range(a):
         for j in range(b):
@@ -43,29 +45,66 @@ def Average(matrix, r, c): # matrix - rows - columns
     
     return res
 
-def Histogram(matrix):
-    arr = np.array(matrix)
+def Histogram(arr):
     res = np.zeros((256))
     
     for i in arr:
         for j in i:
-            res[int(j)] += 1
+            res[j] += 1
             
-    print(res)
+    return res
 
-#____________________________________________________________________#
+def Distance(a, b):
+    ans = 0
 
+    for i in range(a.shape[0]):
+        ans += (a[i] - b[i]) * (a[i] - b[i])
+    
+    return ans
+
+def Guess(matrix):
+    K = 6000   # KNN
+    dis = np.zeros(y_train.shape[0])
+    
+    arr = Flatten(matrix)
+    for i in range(y_train.shape[0]):
+        dis[i] = Distance(X_train_Flattened[i], arr)
+        
+    index = np.lexsort((y_train, dis))  # Sort by dis, then by y_train
+    
+    cnt = np.zeros(10)  # counting array
+    for i in range(K):
+        cnt[ y_train[index[i]] ] += 1
+        
+    max_index = 0
+    for i in range(10):
+        if cnt[i] > cnt[max_index]:
+            max_index = i
+  
+    return max_index
+    
+#-----------------------------------------------------------------------------------------------------------
 X_train, y_train = load_mnist('data/', kind='train')
-print('Rows: %d, columns: %d' % (X_train.shape[0], X_train.shape[1]))
+X_test, y_test = load_mnist('data/', kind='t10k')
 
-fig, ax = plt.subplots(nrows=2, ncols=5, sharex=True, sharey=True,)
-ax = ax.flatten()
+# print('Rows: %d, columns: %d' % (X_train.shape[0], X_train.shape[1]))
+
+# fig, ax = plt.subplots(nrows=2, ncols=5, sharex=True, sharey=True,)
+# ax = ax.flatten()
+
+X_train_Flattened = []
+for i in range(y_train.shape[0]):
+    X_train_Flattened.append(Flatten(X_train[i]))
+
 for i in range(10):
-    img = X_train[y_train == i][0]
-    #img = Average(img, 2, 2)
-    ax[i].imshow(img, cmap='Greys', interpolation='nearest')
+    print("Input is number %d" % y_test[i])
+    print("Computer guess your number is %d" % Guess(X_test[i]))
 
-ax[0].set_xticks([])
-ax[0].set_yticks([])
-plt.tight_layout()
-plt.show()
+# for i in range(10):
+#     img = X_train[y_train == i][1]
+#     ax[i].imshow(img, cmap='Blues', interpolation='nearest')
+
+# ax[0].set_xticks([])
+# ax[0].set_yticks([])
+# plt.tight_layout()
+# plt.show()
