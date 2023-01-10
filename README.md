@@ -9,12 +9,12 @@ Download at https://code.visualstudio.com/Download
 #### Install extension "Python" after installing VS Code.
 
 ## 2/ Prepare MNIST database
-Download MNIST database at: http://yann.lecun.com/exdb/mnist/ and **DO NOT UNZIP FILES**
+Download MNIST database at: http://yann.lecun.com/exdb/mnist/ and **DO NOT UNZIP FILES**.
 
 The MNIST database contains 60,000 images used to recognise input numbers called ```train```, and 10,000 images used to check if the algorithm is good or bad, called ```test```. Every image has its label, respective to the number written in the image.
 
 ## 3/ Organise project
-4 zips of MNIST daatabase is in ```data``` subfolder
+4 zips of MNIST database is in ```data``` subfolder.
 
 ## 4/ Before we start...
 Run ```test_MNIST.py``` file to make sure MNIST database is successfully installed and set up.
@@ -22,7 +22,7 @@ Run ```test_MNIST.py``` file to make sure MNIST database is successfully install
 ## 5/ How do we recognise the numbers?
 Step 1: Vectorize all the images of ```train``` database and the ```input img```.
 
-Step 2: Find the **distance** from ```input img``` and each img in ```train```.
+Step 2: Find the **distance** between ```input img``` and each img in ```train```.
 
 Step 3: Sort all the distances in increasing order.
 
