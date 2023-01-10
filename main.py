@@ -42,7 +42,6 @@ def Average(matrix, r, c): # matrix - number of rows to merge - number of column
     for i in range(a):
         for j in range(b):
             res[i][j] //= (r * c)
-    
     return res
 
 def Histogram(arr):
@@ -51,19 +50,16 @@ def Histogram(arr):
     for i in arr:
         for j in i:
             res[j] += 1
-            
     return res
 
 def Distance(a, b):
     ans = 0
-
     for i in range(a.shape[0]):
         ans += (a[i] - b[i]) * (a[i] - b[i])
-    
     return ans
 
 def Guess(matrix):
-    K = 6000   # KNN
+    K = 500   # KNN
     dis = np.zeros(y_train.shape[0])
     
     arr = Flatten(matrix)
@@ -80,17 +76,11 @@ def Guess(matrix):
     for i in range(10):
         if cnt[i] > cnt[max_index]:
             max_index = i
-  
     return max_index
     
 #-----------------------------------------------------------------------------------------------------------
 X_train, y_train = load_mnist('data/', kind='train')
 X_test, y_test = load_mnist('data/', kind='t10k')
-
-# print('Rows: %d, columns: %d' % (X_train.shape[0], X_train.shape[1]))
-
-# fig, ax = plt.subplots(nrows=2, ncols=5, sharex=True, sharey=True,)
-# ax = ax.flatten()
 
 X_train_Flattened = []
 for i in range(y_train.shape[0]):
@@ -99,9 +89,17 @@ for i in range(y_train.shape[0]):
 for i in range(10):
     print("Input is number %d" % y_test[i])
     print("Computer guess your number is %d" % Guess(X_test[i]))
+    print("----------------")
+
+    
+## below code is to show images
+# print('MNIST train size: %d, img size: %d x %d' % (X_train.shape[0], X_train.shape[1], X_train.shape[2]))
+
+# fig, ax = plt.subplots(nrows=2, ncols=5, sharex=True, sharey=True,)
+# ax = ax.flatten()
 
 # for i in range(10):
-#     img = X_train[y_train == i][1]
+#     img = X_test[i]
 #     ax[i].imshow(img, cmap='Blues', interpolation='nearest')
 
 # ax[0].set_xticks([])
