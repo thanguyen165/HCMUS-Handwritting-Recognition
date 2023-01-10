@@ -29,3 +29,21 @@ Step 3: Sort all the distances in increasing order.
 Step 4: Choose ```k``` smallest value, called **k nearest neighbour (KNN)**. ```k``` can be 50, 100, 500, etc. You can choose any value for it.
 
 Step 5: Count and find in ```k``` labels which label has the largest frequency. That is the number this algorithm guess.
+
+## 6/ Run code
+Run file ```main.py``` and see what will happen.
+
+## 7/ Optimize Speed
+Use **C** code to increase speed.
+### 7.1/ Prepare
+#### You must have GCC compiler to do this way.
+
+Get the ```lib.hpp``` and ```lib.cpp``` files.
+
+Run these command:
+#### ``` g++ -c -fPIC lib.cpp -o lib.o ```
+#### ``` g++ -shared lib.o -o lib.so ```
+### 7.2/ Let's Rock!
+Run ```main_C``` file instead of ```main``` file.
+
+The only difference of these files is ```main_C.py``` run ```flatten()``` method in **C** (which in ```lib.cpp``` file), but ```main.py``` run that method in ```numpy library```.
