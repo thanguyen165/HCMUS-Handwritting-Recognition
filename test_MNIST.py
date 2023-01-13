@@ -21,7 +21,6 @@ def load_mnist(path, kind='train'):
     return images, labels
 
 #----------------------------------------------------------------------------------
-
 X_train, y_train = load_mnist('data/', kind='train')
 X_test, y_test = load_mnist('data/', kind='t10k')
 print('MNIST train size: %d, img size: %d x %d' % (X_train.shape[0], X_train.shape[1], X_train.shape[2]))
@@ -31,9 +30,11 @@ ax = ax.flatten()
 for i in range(0, 10):
     img = X_train[y_train == i][0]
     ax[i].imshow(img, cmap='Greys', interpolation='nearest')
+    ax[i].set_title(i)
 for i in range(10, 20):
     img = X_train[i]
     ax[i].imshow(img, cmap='Greys', interpolation='nearest')
+    ax[i].set_title(y_train[i])
 
 ax[0].set_xticks([])
 ax[0].set_yticks([])
