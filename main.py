@@ -20,21 +20,9 @@ def load_mnist(path, kind='train'):
 
     return images, labels
 
-#----------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------
 # Functions
-def Guess(matrix, method = 1, r = 2, c = 2):
-    if method > 3 or method < 1:
-        method = 1
-    if method == 1:
-        arr = Flatten(matrix)
-        return Guess_Flatten(arr)
-    elif method == 2:
-        arr = Flatten(Average(matrix, r, c))
-        return Guess_Average(arr, r, c)
-    elif method == 3:
-        return Guess_Histogram(matrix)
-
-def Distance(a, b):
+def distance(a, b):
     ans = 0
     for i in range(a.shape[0]):
         ans += (a[i] - b[i]) * (a[i] - b[i])
@@ -46,28 +34,9 @@ def Flatten(matrix):
     arr = np.array(matrix)
     return arr.flatten()
 
-def Prepare_Guess_Flatten():
+def prepare_flattened_array():
     for i in range(y_train.shape[0]):
         X_train_Flattened.append(Flatten(X_train[i]))
-
-def Guess_Flatten(arr):
-    K = 500   # KNN
-    dis = np.zeros(y_train.shape[0])
-    
-    for i in range(y_train.shape[0]):
-        dis[i] = Distance(X_train_Flattened[i], arr)
-        
-    index = np.lexsort((y_train, dis))  # Sort by dis, then by y_train
-    
-    cnt = np.zeros(10)  # counting array
-    for i in range(K):
-        cnt[ y_train[index[i]] ] += 1
-        
-    max_index = 0
-    for i in range(10):
-        if cnt[i] > cnt[max_index]:
-            max_index = i
-    return max_index
 
 #________
 # Average
@@ -88,28 +57,9 @@ def Average(matrix, r = 2, c = 2): # matrix - number of rows to merge - number o
             res[i][j] //= (r * c)
     return res
 
-def Prepare_Guess_Average(r = 2, c = 2):
+def prepare_average_array(r = 2, c = 2):
     for i in range(y_train.shape[0]):
         X_train_Average.append(Flatten(Average(X_train[i], r, c)))
-
-def Guess_Average(arr):
-    K = 500   # KNN
-    dis = np.zeros(y_train.shape[0])
-    
-    for i in range(y_train.shape[0]):
-        dis[i] = Distance(X_train_Average[i], arr)
-        
-    index = np.lexsort((y_train, dis))  # Sort by dis, then by y_train
-    
-    cnt = np.zeros(10)  # counting array
-    for i in range(K):
-        cnt[ y_train[index[i]] ] += 1
-        
-    max_index = 0
-    for i in range(10):
-        if cnt[i] > cnt[max_index]:
-            max_index = i
-    return max_index
 
 #________
 # Histogram
@@ -121,20 +71,35 @@ def Histogram(matrix):
             res[j] += 1
     return res
 
-def Prepare_Guess_Histogram():
+def prepare_histogram_array():
     for i in range(y_train.shape[0]):
         X_train_Histogram.append(Histogram(X_train[i]))
 
-def Guess_Histogram(matrix):
-    K = 500   # KNN
+#----------------------
+def guess(matrix, method = 1, KNN = 500, r = 2, c = 2):
+    if method > 3 or method < 1:
+        method = 1
+    
+    if method == 1:
+        arr = Flatten(matrix)
+    elif method == 2:
+        arr = Flatten(Average(matrix, r, c))
+    elif method == 3:
+        arr = Histogram(matrix)
+    
     dis = np.zeros(y_train.shape[0])
     
-    arr = Histogram(matrix)
     for i in range(y_train.shape[0]):
-        dis[i] = Distance(X_train_Histogram[i], arr)
-        
+        if method == 1:
+            dis[i] = distance(X_train_Flattened[i], arr)
+        elif method == 2:
+            dis[i] = distance(X_train_Average[i], arr)
+        elif method == 3:
+            dis[i] = distance(X_train_Histogram[i], arr)
+
     index = np.lexsort((y_train, dis))  # Sort by dis, then by y_train
     
+    K = KNN   # k nearest neighbours
     cnt = np.zeros(10)  # counting array
     for i in range(K):
         cnt[ y_train[index[i]] ] += 1
@@ -150,29 +115,30 @@ X_train, y_train = load_mnist('data/', kind='train')
 X_test, y_test = load_mnist('data/', kind='t10k')
 
 print("prepare...")
+
 X_train_Flattened = []
-Prepare_Guess_Flatten()
+prepare_flattened_array()
 X_train_Average = []
-Prepare_Guess_Average()
+prepare_average_array()
 X_train_Histogram = []
-# Prepare_Guess_Histogram()
+# prepare_histogram_array()
 
 print("done. let's rock")
 print("_______")
 
-for i in range(5):
+for i in range(90, 95):
     print("Input is number %d" % y_test[i])
-    print("Computer guess your number is %d" % Guess(X_test[i], 1))
+    print("Computer guess your number is %d" % guess(X_test[i], 2))
     print("----------------")
 
-    
+
 ## below code is to show images
 # print('MNIST train size: %d, img size: %d x %d' % (X_train.shape[0], X_train.shape[1], X_train.shape[2]))
 
 # fig, ax = plt.subplots(nrows=2, ncols=5, sharex=True, sharey=True,)
 # ax = ax.flatten()
 
-# for i in range(10):
+# for i in range(5):
 #     img = X_test[i]
 #     ax[i].imshow(img, cmap='Blues', interpolation='nearest')
 
