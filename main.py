@@ -115,20 +115,26 @@ X_train, y_train = load_mnist('data/', kind='train')
 X_test, y_test = load_mnist('data/', kind='t10k')
 
 print("prepare...")
+method = 1
+# method = 1 for flatten, 2 for average, 3 for histogram
+KNN = 500
+rows_to_ave = 2
+columns_to_ave = 2
 
 X_train_Flattened = []
 prepare_flattened_array()
 X_train_Average = []
-prepare_average_array()
+prepare_average_array(rows_to_ave, columns_to_ave)
 X_train_Histogram = []
 # prepare_histogram_array()
 
-print("done. let's rock")
+
+print("done! let's rock")
 print("_______")
 
 for i in range(90, 95):
     print("Input is number %d" % y_test[i])
-    print("Computer guess your number is %d" % guess(X_test[i], 2))
+    print("Computer guess your number is %d" % guess(X_test[i], method, KNN, rows_to_ave, columns_to_ave))
     print("----------------")
 
 
