@@ -23,10 +23,13 @@ def load_mnist(path, kind='train'):
 
 #----------------------------------------------------------------------------------------------------
 # Functions
-
 def Flatten(matrix):
     arr = np.array(matrix)
     return arr.flatten()
+
+def prepare_flattened_array():
+    for i in range(y_train.shape[0]):
+        X_train_Flattened.append(Flatten(X_train[i]))
 
 def Average(matrix, r, c): # matrix - number of rows to merge - number of columns to merge
     n = matrix.shape[0]
@@ -45,13 +48,21 @@ def Average(matrix, r, c): # matrix - number of rows to merge - number of column
             res[i][j] //= (r * c)
     return res
 
-def Histogram(arr):
+def prepare_average_array(r = 2, c = 2):
+    for i in range(y_train.shape[0]):
+        X_train_Average.append(Flatten(Average(X_train[i], r, c)))
+
+def Histogram(matrix):
     res = np.zeros((256))
     
-    for i in arr:
+    for i in matrix:
         for j in i:
             res[j] += 1
     return res
+
+def prepare_histogram_array():
+    for i in range(y_train.shape[0]):
+        X_train_Histogram.append(Histogram(X_train[i]))
 
 def Distance(a, b):
     ans = 0
@@ -59,42 +70,50 @@ def Distance(a, b):
         ans += (a[i] - b[i]) * (a[i] - b[i])
     return ans
 
-def Guess(matrix):
-    K = 500   # KNN
-    dis = np.zeros(y_train.shape[0])
+def guess(matrix, method = 1, KNN = 500, r = 2, c = 2):
+    if method > 3 or method < 1:
+        method = 1
     
-    arr = Flatten(matrix)
-    for i in range(y_train.shape[0]):
-        dis[i] = Distance(X_train_Flattened[i], arr)
-        
-    index = np.lexsort((y_train, dis))  # Sort by dis, then by y_train
-    
-    cnt = np.zeros(10)  # counting array
-    for i in range(K):
-        cnt[ y_train[index[i]] ] += 1
-        
-    max_index = 0
-    for i in range(10):
-        if cnt[i] > cnt[max_index]:
-            max_index = i
-    return max_index
+    if method == 1:
+        arr = Flatten(matrix)
+        return lib.guess(ctypes.c_void_p(X_train_Flattened.ctypes.data), ctypes.c_void_p(y_train.ctypes.data), ctypes.c_void_p((np.array(arr, dtype = np.uint0)).ctypes.data))
+    elif method == 2:
+        arr = Flatten(Average(matrix, r, c))
+        return lib.guess(ctypes.c_void_p(X_train_Average.ctypes.data), ctypes.c_void_p(y_train.ctypes.data), ctypes.c_void_p((np.array(arr, dtype = np.uint0)).ctypes.data))
+    elif method == 3:
+        arr = Histogram(matrix)
+        return lib.guess(ctypes.c_void_p(X_train_Histogram.ctypes.data), ctypes.c_void_p(y_train.ctypes.data), ctypes.c_void_p((np.array(arr, dtype = np.uint0)).ctypes.data))
     
 #-----------------------------------------------------------------------------------------------------------
 X_train, y_train = load_mnist('data/', kind='train')
 X_test, y_test = load_mnist('data/', kind='t10k')
 lib = ctypes.cdll.LoadLibrary('./lib.so')
 
+print("prepare...")
+method = 1
+#method = 1 for flatten, 2 for average, 3 for histogram
+KNN = 500
+rows_to_ave = 2
+columns_to_ave = 2
+
 X_train_Flattened = []
-for i in range(X_train.shape[0]):
-    X_train_Flattened.append(Flatten(X_train[i]))
+prepare_flattened_array()
+X_train_Average = []
+prepare_average_array(rows_to_ave, columns_to_ave)
+X_train_Histogram = []
+# prepare_histogram_array()
+
+print("done! let's rock")
+print("_______")
 
 X_train_Flattened = np.array(X_train_Flattened, dtype = np.uint0)
 y_train = np.array(y_train, dtype = np.uint0)
 y_test = np.array(y_test, dtype = np.uint0)
 
+
 for i in range(10):
     print("Input is number %d" % y_test[i])
-    print("computer guess: %d" % lib.guess(ctypes.c_void_p(X_train_Flattened.ctypes.data), ctypes.c_void_p(y_train.ctypes.data), ctypes.c_void_p((np.array(X_test[i], dtype = np.uint0)).ctypes.data)))
+    print("computer guess: %d" % guess(X_test[i], method, KNN, rows_to_ave, columns_to_ave))
     print("----------------")
 
     
