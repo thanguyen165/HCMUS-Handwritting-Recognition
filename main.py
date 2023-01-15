@@ -28,18 +28,10 @@ def distance(a, b):
         ans += (a[i] - b[i]) * (a[i] - b[i])
     return ans
 
-#________
-# Flatten
 def Flatten(matrix):
     arr = np.array(matrix)
     return arr.flatten()
 
-def prepare_flattened_array():
-    for i in range(y_train.shape[0]):
-        X_train_Flattened.append(Flatten(X_train[i]))
-
-#________
-# Average
 def Average(matrix, r = 2, c = 2): # matrix - number of rows to merge - number of columns to merge
     n = matrix.shape[0]
     m = matrix.shape[1]
@@ -57,23 +49,12 @@ def Average(matrix, r = 2, c = 2): # matrix - number of rows to merge - number o
             res[i][j] //= (r * c)
     return res
 
-def prepare_average_array(r = 2, c = 2):
-    for i in range(y_train.shape[0]):
-        X_train_Average.append(Flatten(Average(X_train[i], r, c)))
-
-#________
-# Histogram
-# BUG IN HISTOGRAM FUCTION, PLEASE FIX IT
 def Histogram(matrix):
     res = np.zeros((256))
     for i in matrix:
         for j in i:
-            res[j] += 1
+            res[int(j)] += 1
     return res
-
-def prepare_histogram_array():
-    for i in range(y_train.shape[0]):
-        X_train_Histogram.append(Histogram(X_train[i]))
 
 #----------------------
 def guess(matrix, method = 1, KNN = 500, r = 2, c = 2):
@@ -110,33 +91,45 @@ def guess(matrix, method = 1, KNN = 500, r = 2, c = 2):
             max_index = i
     return max_index
 
+#----------------------
+def cal_accuracy(method = 1, KNN = 500):
+    cnt = y_test.shape[0]
+    cnt = 100
+    true_ = 0
+    for i in range(cnt):
+        true_ += (y_test[i] == guess(X_test[i], method, KNN, rows_to_ave, columns_to_ave))
+    return true_ / cnt
+
 #-----------------------------------------------------------------------------------------------------------
 X_train, y_train = load_mnist('data/', kind='train')
 X_test, y_test = load_mnist('data/', kind='t10k')
 
 print("prepare...")
-method = 1
-# method = 1 for flatten, 2 for average, 3 for histogram
-KNN = 500
 rows_to_ave = 2
 columns_to_ave = 2
 
-X_train_Flattened = []
-prepare_flattened_array()
-X_train_Average = []
-prepare_average_array(rows_to_ave, columns_to_ave)
-X_train_Histogram = []
-# prepare_histogram_array()
+X_train_Flattened = [Flatten(i) for i in X_train]
+X_train_Average = [Flatten(Average(i, rows_to_ave, columns_to_ave)) for i in X_train]
+X_train_Histogram = [Histogram(i) for i in X_train]
 
+print("done! Let's rock")
+print("__________________")
 
-print("done! let's rock")
-print("_______")
+KNNarray = [10, 100, 500]
+methodarray = [1, 2, 3]
+ans = np.zeros((4))
 
-for i in range(90, 95):
-    print("Input is number %d" % y_test[i])
-    print("Computer guess your number is %d" % guess(X_test[i], method, KNN, rows_to_ave, columns_to_ave))
-    print("----------------")
+for KNN in KNNarray:
+    for method in methodarray:
+        ans[method] = cal_accuracy(method, KNN)
+    print("K = %d" % KNN)
+    print("    Flatten: %f%%" % (ans[1] * 100))
+    print("    Average: %f%%" % (ans[2] * 100))
+    print("    Histogram: %f%%" % (ans[3] * 100))
+    print("------------------------------")
 
+## below code allows us to guess the number written in img.
+# print("Computer guess your number is %d" % guess(img, method, KNN, rows_to_ave, columns_to_ave))
 
 ## below code is to show images
 # print('MNIST train size: %d, img size: %d x %d' % (X_train.shape[0], X_train.shape[1], X_train.shape[2]))
