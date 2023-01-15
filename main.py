@@ -20,8 +20,8 @@ def load_mnist(path, kind='train'):
 
     return images, labels
 
-#------------------------------------------------------------------------------------
-# Functions
+##_________________________________________________________________________
+## Functions
 def distance(a, b):
     ans = 0
     for i in range(a.shape[0]):
@@ -56,7 +56,7 @@ def Histogram(matrix):
             res[int(j)] += 1
     return res
 
-#----------------------
+##----------------------
 def guess(matrix, method = 1, KNN = 500, r = 2, c = 2):
     if method > 3 or method < 1:
         method = 1
@@ -91,46 +91,57 @@ def guess(matrix, method = 1, KNN = 500, r = 2, c = 2):
             max_index = i
     return max_index
 
-#----------------------
-def cal_accuracy(method = 1, KNN = 500):
-    cnt = y_test.shape[0]
-    cnt = 100
-    true_ = 0
-    for i in range(cnt):
-        true_ += (y_test[i] == guess(X_test[i], method, KNN, rows_to_ave, columns_to_ave))
-    return true_ / cnt
+##----------------------
+def cal_accuracy():
+    KNNarray = [10, 100, 500]
+    methodarray = [1, 2, 3]
+    ans = np.zeros((4))
 
-#-----------------------------------------------------------------------------------------------------------
+    for KNN in KNNarray:
+        for method in methodarray:
+            cnt = y_test.shape[0]
+            true_ = 0
+            cnt = 100
+            for i in range(cnt):
+                true_ += (y_test[i] == guess(X_test[i], method, KNN, rows_to_ave, columns_to_ave))
+            ans[method] = true_ / cnt
+
+        print("K = %d" % KNN)
+        print("    Flatten: %f%%" % (ans[1] * 100))
+        print("    Average: %f%%" % (ans[2] * 100))
+        print("    Histogram: %f%%" % (ans[3] * 100))
+        print("------------------------------")
+
+##-----------------------------------------------------------------------------------------------------------
+print("prepare...")
 X_train, y_train = load_mnist('data/', kind='train')
 X_test, y_test = load_mnist('data/', kind='t10k')
 
-print("prepare...")
 rows_to_ave = 2
 columns_to_ave = 2
 
 X_train_Flattened = [Flatten(i) for i in X_train]
 X_train_Average = [Flatten(Average(i, rows_to_ave, columns_to_ave)) for i in X_train]
 X_train_Histogram = [Histogram(i) for i in X_train]
-
 print("done! Let's rock")
 print("__________________")
 
-KNNarray = [10, 100, 500]
-methodarray = [1, 2, 3]
-ans = np.zeros((4))
+# below code is to caculate accuracy of each method
+cal_accuracy()
 
-for KNN in KNNarray:
-    for method in methodarray:
-        ans[method] = cal_accuracy(method, KNN)
-    print("K = %d" % KNN)
-    print("    Flatten: %f%%" % (ans[1] * 100))
-    print("    Average: %f%%" % (ans[2] * 100))
-    print("    Histogram: %f%%" % (ans[3] * 100))
-    print("------------------------------")
 
+##______________________________________________________________
 ## below code allows us to guess the number written in img.
-# print("Computer guess your number is %d" % guess(img, method, KNN, rows_to_ave, columns_to_ave))
+# method = 1
+# # method = 1 for flatten, 2 for average, 3 for histogram
+# KNN = 500
+# for i in range(90, 95):
+#     print("Input is number %d" % y_test[i])
+#     print("Computer guess your number is %d" % guess(X_test[i], method, KNN, rows_to_ave, columns_to_ave))
+#     print("----------------")
 
+
+##______________________________________________________________
 ## below code is to show images
 # print('MNIST train size: %d, img size: %d x %d' % (X_train.shape[0], X_train.shape[1], X_train.shape[2]))
 
