@@ -5,17 +5,17 @@ This is our project for Introduction to Information Technology.
 
 Our team:
 
-1. [Phuc, Song Dong Gia](https://github.com/songdongsongdongphuc)
+1. [Phuc, Song Dong Gia](https://github.com/songdongsongdongphuc/)
 
-2. [Loi, Nguyen Minh](https://github.com/mf0212)
+2. [Loi, Nguyen Minh](https://github.com/mf0212/)
 
-3. [Thang, Nguyen Quang](https://github.com/thanguyen165)
+3. [Thang, Nguyen Quang](https://github.com/thanguyen165/)
 
 ## 2/ Environment
 ### Python 3.7
 Download at https://docs.conda.io/en/latest/miniconda.html
 ### Visual Studio Code (VS Code):
-Download at https://code.visualstudio.com/Download
+Download at https://code.visualstudio.com/Download/
 
 #### Install extension "Python" after installing VS Code.
 
@@ -51,10 +51,12 @@ Use **[C++](https://www.freecodecamp.org/news/the-c-plus-plus-programming-langua
 
 Get the ```lib.hpp``` and ```lib.cpp``` files.
 
-Run these command (I use GNU-GCC):
+Run these command (I use **[GNU-GCC](https://gcc.gnu.org/)**):
 #### ``` g++ -c -fPIC lib.cpp -o lib.o ```
 #### ``` g++ -shared lib.o -o lib.so ```
+
+Or compile them by **[Visual Studio](https://visualstudio.microsoft.com/vs/)**
 ### 7.2/ Let's Rock!
 Run ```main_C.py``` file instead of ```main.py``` file.
 
-The only difference of these files is ```main_C.py``` run ```guess()``` function in **C++** (which in ```lib.cpp``` file), but ```main.py``` run that function in ```Python```.
+The only difference of these files is ```main_C.py``` runs ```guess()``` function in **C++** (which in ```lib.cpp``` file), but ```main.py``` runs that function in ```Python```.
