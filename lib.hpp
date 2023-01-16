@@ -1,5 +1,5 @@
-#ifndef LIB1_H_INCLUDED
-#define LIB1_H_INCLUDED
+#ifndef LIB_H_INCLUDED
+#define LIB_H_INCLUDED
 
 #ifdef __cplusplus
    extern "C" {
@@ -13,10 +13,10 @@ struct node {
     }
 };
 
-int guess(void * xav, void * yav, void * testav);
+int guess_optimize(void *x_train_p, void *y_train_p, void *test_matrix_p, int img_size, int KNN);
 
 #ifdef __cplusplus
    }
 #endif
 
-#endif /* LIB1_H_INCLUDED */
+#endif /* LIB_H_INCLUDED */
