@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import os
 import numpy as np
 import gzip
+import cv2
+import time
 
 def load_mnist(path, kind='train'):
     """Load MNIST data from 'path' """
@@ -20,7 +22,7 @@ def load_mnist(path, kind='train'):
 
     return images, labels
 
-##_________________________________________________________________________
+##__________________________________________________________________________________________
 ## Functions
 def distance(a, b):
     ans = 0
@@ -92,6 +94,7 @@ def guess(matrix, method = 1, KNN = 500, r = 2, c = 2):
     return max_index
 
 ##----------------------
+## below code is to caculate accuracy of each method
 def cal_accuracy():
     KNNarray = [10, 100, 500]
     methodarray = [1, 2, 3]
@@ -100,11 +103,10 @@ def cal_accuracy():
     for KNN in KNNarray:
         for method in methodarray:
             cnt = y_test.shape[0]
-            true_ = 0
-            cnt = 100
+            count_true = 0
             for i in range(cnt):
-                true_ += (y_test[i] == guess(X_test[i], method, KNN, rows_to_ave, columns_to_ave))
-            ans[method] = true_ / cnt
+                count_true += (y_test[i] == guess(X_test[i], method, KNN, rows_to_ave, columns_to_ave))
+            ans[method] = count_true / cnt
 
         print("K = %d" % KNN)
         print("    Flatten: %f%%" % (ans[1] * 100))
@@ -112,33 +114,69 @@ def cal_accuracy():
         print("    Histogram: %f%%" % (ans[3] * 100))
         print("------------------------------")
 
-##-----------------------------------------------------------------------------------------------------------
+##----------------------
+def import_image(img_path):
+    res = cv2.imread(img_path)
+    img_column_size, img_row_size = res.shape[0], res.shape[1]
+    img = np.zeros((img_column_size, img_row_size))
+    if res[0][0][1] < 10:
+        for i in range(img_column_size):
+            for j in range(img_row_size):
+                img[i][j] = res[i][j][1]
+                if img[i][j] < 170:
+                    img[i][j] = 0
+                else:
+                    img[i][j] = 256
+    else:
+        for i in range(img_column_size):
+            for j in range(img_row_size):
+                img[i][j] = 255 - res[i][j][1]
+                if img[i][j] < 170:
+                    img[i][j] = 0
+                else:
+                    img[i][j] = 256
+    img = Average(img, img_column_size // 28 + (img_column_size % 28 != 0), img_row_size // 28 + (img_row_size % 28 != 0))
+    return img
+
+##__________________________________________________________________________________________
 print("prepare...")
+time_begin = time.time()
+
 X_train, y_train = load_mnist('data/', kind='train')
 X_test, y_test = load_mnist('data/', kind='t10k')
 
 rows_to_ave = 2
 columns_to_ave = 2
+method = 1
+# method = 1 for flatten, 2 for average, 3 for histogram
+KNN = 500
 
 X_train_Flattened = [Flatten(i) for i in X_train]
 X_train_Average = [Flatten(Average(i, rows_to_ave, columns_to_ave)) for i in X_train]
 X_train_Histogram = [Histogram(i) for i in X_train]
-print("done! Let's rock")
-print("__________________")
 
-# below code is to caculate accuracy of each method
+time_end_loading = time.time()
+print("Done! Time for loading: ", time_end_loading - time_begin)
+print("_______________________________")
+
+##__________________________________________________________________________________________
+## call the functions here
 cal_accuracy()
 
 
 ##______________________________________________________________
 ## below code allows us to guess the number written in img.
-# method = 1
-# # method = 1 for flatten, 2 for average, 3 for histogram
-# KNN = 500
 # for i in range(90, 95):
 #     print("Input is number %d" % y_test[i])
 #     print("Computer guess your number is %d" % guess(X_test[i], method, KNN, rows_to_ave, columns_to_ave))
 #     print("----------------")
+
+
+##______________________________________________________________
+## import image written by user
+# name = "test/six.jpg"
+# img = import_image(name)
+# print(guess(img))
 
 
 ##______________________________________________________________
@@ -156,3 +194,6 @@ cal_accuracy()
 # ax[0].set_yticks([])
 # plt.tight_layout()
 # plt.show()
+
+time_end = time.time()
+print("\nTotal time: ", time_end - time_begin)
