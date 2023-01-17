@@ -23,7 +23,7 @@ def load_mnist(path, kind='train'):
 
     return images, labels
 
-##_________________________________________________________________________
+##__________________________________________________________________________________________
 ## Functions
 def distance(a, b):
     ans = 0
@@ -96,6 +96,7 @@ def guess(matrix, method = 1, KNN = 500, r = 2, c = 2):
         )
   
 ##----------------------
+## below code is to caculate accuracy of each method
 def cal_accuracy():
     KNNarray = [10, 100, 500]
     methodarray = [1, 2, 3]
@@ -139,7 +140,7 @@ def import_image(img_path):
     img = Average(img, img_column_size // 28 + (img_column_size % 28 != 0), img_row_size // 28 + (img_row_size % 28 != 0))
     return img
 
-#-----------------------------------------------------------------------------------------------------------
+##__________________________________________________________________________________________
 print("prepare...")
 time_begin = time.time()
 
@@ -162,14 +163,13 @@ y_train = np.array(y_train, dtype = np.uint0)
 y_test = np.array(y_test, dtype = np.uint0)
 
 time_end_loading = time.time()
-
 print("Done! Time for loading: ", time_end_loading - time_begin)
 print("_______________________________")
 
+##______________________________________________________________
+## call the functions here
 cal_accuracy()
-time_end = time.time()
-print("\nTime for running: ", time_end_loading - time_begin)
-print("\nTotal time: ", time_end - time_begin)
+
 
 ##______________________________________________________________
 ## below code allows us to guess the number written in img.
@@ -180,6 +180,13 @@ print("\nTotal time: ", time_end - time_begin)
 #     print("Input is number %d" % y_test[i])
 #     print("Computer guess your number is %d" % guess(X_test[i], method, KNN, rows_to_ave, columns_to_ave))
 #     print("----------------")
+
+
+##______________________________________________________________
+## import image
+# name = "test/six.jpg"
+# img = import_image(name)
+# print(guess(img))
 
 
 ##______________________________________________________________
@@ -197,3 +204,6 @@ print("\nTotal time: ", time_end - time_begin)
 # ax[0].set_yticks([])
 # plt.tight_layout()
 # plt.show()
+
+time_end = time.time()
+print("\nTotal time: ", time_end - time_begin)
