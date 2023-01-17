@@ -19,6 +19,13 @@ Download at https://code.visualstudio.com/Download/
 
 #### Install extension "Python" after installing VS Code.
 
+### Numpy Library:
+``` pip install numpy```
+### Matplotlib Library:
+``` pip install matplotlib```
+### cv2 Library
+``` pip install opencv-python```
+
 ## 3/ Prepare MNIST database
 Download MNIST database at: http://yann.lecun.com/exdb/mnist/ and **DO NOT UNZIP FILES**.
 
@@ -42,12 +49,14 @@ Step 4: Choose ```k``` smallest value, called **k nearest neighbours (KNN)**. ``
 Step 5: Count and find in ```k``` labels which label has the largest frequency. That is the number this algorithm guess.
 
 ## 7/ Run code
-Run file ```main.py``` and see what will happen.
+Run file ```main.py```.
+
+Run by this cmd: ```python main.py```
 
 ## 8/ Optimize Speed
 Use **[C++](https://www.freecodecamp.org/news/the-c-plus-plus-programming-language/)** code to increase speed.
 ### 7.1/ Prepare
-#### You must have **C++** compiler to do this way.
+#### You must have **C++** compiler to compile **C++*** code.
 
 Get the ```lib.hpp``` and ```lib.cpp``` files.
 
@@ -56,7 +65,11 @@ Run these command (I use **[GNU-GCC](https://gcc.gnu.org/)**):
 #### ``` g++ -shared lib.o -o lib.so ```
 
 Or compile them by **[Visual Studio](https://visualstudio.microsoft.com/vs/)**
-### 7.2/ Let's Rock!
-Run ```main_C.py``` file instead of ```main.py``` file.
 
-The only difference of these files is ```main_C.py``` runs ```guess()``` function in **C++** (which in ```lib.cpp``` file), but ```main.py``` runs that function in ```Python```.
+You now have a ```lib.so``` file. Keep this file and ```main_optimze.py``` file in same directory.
+
+#### If you don't want to edit the library or you don't have a compiler, use mine instead of building by yourself.
+### 7.2/ Let's Rock!
+Run ```main_optimize.py``` file instead of ```main.py``` file.
+
+The only difference of these files is ```main.py``` runs ```guess()``` function in ```Python```, but in ```main_optimize.py```, the ```guess()``` function calls the ```guess_optimize()``` function written by **C++** in ```lib.so```.
